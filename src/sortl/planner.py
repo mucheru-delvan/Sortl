@@ -67,6 +67,20 @@ class Plan:
 
 
 def _hash_file(path: Path) -> str:
+    """Calculate the SHA-256 hash of a file using chunked reads.
+    
+        Reads the file in 1 MiB chunks to avoid loading the entire file
+        into memory.
+    
+        Args:
+            path: Path to the file whose content should be hashed.
+    
+        Returns:
+            The file's SHA-256 digest as a 64-character hexadecimal string.
+    
+        Raises:
+            OSError: If the file cannot be opened or read.
+        """
     digest = sha256()
 
     with path.open("rb") as file:

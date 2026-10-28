@@ -2,7 +2,7 @@ import hashlib
 import os
 from pathlib import Path
 
-from sortl.journal import OperationJournal
+from sortl.journal import JournalEntry, OperationJournal
 from sortl.models import FileOperation, OperationStatus
 from sortl.recovery import RecoveryAssessment, inspect_journal
 
@@ -11,6 +11,7 @@ CHANGED_CONTENT = b"Different content"
 
 
 def _sha256(content: bytes) -> str:
+    """Calculate the SHA-256 digest of the given content."""
     return hashlib.sha256(content).hexdigest()
 
 
@@ -18,7 +19,8 @@ def _create_entry(
     journal: OperationJournal,
     source: Path,
     destination: Path,
-):
+) -> JournalEntry:
+    """Create a journal entry for a file operation."""
     return journal.create(
         FileOperation.create(
             source=source,
@@ -28,10 +30,21 @@ def _create_entry(
     )
 
 
+def _get_entry(
+    journal: OperationJournal,
+    operation_id: str,
+) -> JournalEntry:
+    """Retrieve a journal entry or fail if the entry is missing."""
+    entry = journal.get(operation_id)
+    assert entry is not None, f"Journal entry {operation_id!r} was not found"
+    return entry
+
+
 def _move_status_to_in_progress(
     journal: OperationJournal,
     operation_id: str,
 ) -> None:
+    """Transition an operation from planned to in-progress."""
     journal.transition(operation_id, OperationStatus.IN_PROGRESS)
 
 
@@ -51,7 +64,10 @@ def test_planned_source_only_is_not_started(tmp_path: Path) -> None:
         assert finding.assessment == RecoveryAssessment.NOT_STARTED
         assert finding.source_exists
         assert not finding.destination_exists
-        assert journal.get(entry.operation_id).status == OperationStatus.PLANNED
+        assert (
+            _get_entry(journal, entry.operation_id).status
+            == OperationStatus.PLANNED
+        )
 
 
 def test_same_file_at_both_paths_suggests_interrupted_link(
@@ -75,8 +91,9 @@ def test_same_file_at_both_paths_suggests_interrupted_link(
         )
         assert source.exists()
         assert destination.exists()
-        assert journal.get(entry.operation_id).status == (
-            OperationStatus.IN_PROGRESS
+        assert (
+            _get_entry(journal, entry.operation_id).status
+            == OperationStatus.IN_PROGRESS
         )
 
 
@@ -102,8 +119,9 @@ def test_destination_only_matching_hash_may_have_completed(
         assert not finding.source_exists
         assert finding.destination_exists
         assert destination.read_bytes() == CONTENT
-        assert journal.get(entry.operation_id).status == (
-            OperationStatus.IN_PROGRESS
+        assert (
+            _get_entry(journal, entry.operation_id).status
+            == OperationStatus.IN_PROGRESS
         )
 
 
@@ -155,8 +173,9 @@ def test_rolled_back_entry_matches_filesystem(tmp_path: Path) -> None:
 
         finding = inspect_journal(journal).findings[0]
 
-        assert finding.assessment == (
-            RecoveryAssessment.ROLLED_BACK_CONSISTENT
+        assert (
+            finding.assessment
+            == RecoveryAssessment.ROLLED_BACK_CONSISTENT
         )
         assert source.read_bytes() == CONTENT
         assert not destination.exists()
@@ -175,7 +194,10 @@ def test_changed_source_is_reported(tmp_path: Path) -> None:
 
         assert finding.assessment == RecoveryAssessment.SOURCE_CHANGED
         assert finding.source_sha256 == _sha256(CHANGED_CONTENT)
-        assert journal.get(entry.operation_id).status == OperationStatus.PLANNED
+        assert (
+            _get_entry(journal, entry.operation_id).status
+            == OperationStatus.PLANNED
+        )
 
 
 def test_different_existing_files_are_a_conflict(tmp_path: Path) -> None:
@@ -255,4 +277,7 @@ def test_symlink_source_is_reported_as_unsafe(
 
         assert finding.assessment == RecoveryAssessment.UNSAFE_PATH
         assert outside.read_bytes() == b"Do not touch this file"
-        assert journal.get(entry.operation_id).status == OperationStatus.PLANNED
+        assert (
+            _get_entry(journal, entry.operation_id).status
+            == OperationStatus.PLANNED
+        )
