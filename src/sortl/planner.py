@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
 
-
 FILE_CATEGORIES: dict[str, str] = {
     ".jpg": "Images",
     ".jpeg": "Images",

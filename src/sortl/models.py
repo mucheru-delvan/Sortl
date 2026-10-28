@@ -46,7 +46,7 @@ class FileOperation:
         source: Path,
         destination: Path,
         sha256: str,
-    ) -> "FileOperation":
+    ) -> FileOperation:
         if not sha256 or len(sha256) != 64:
             raise ValueError("sha256 must be a 64-character hexadecimal digest")
 

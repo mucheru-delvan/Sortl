@@ -4,7 +4,6 @@ import pytest
 
 from sortl.models import FileOperation, OperationStatus
 
-
 VALID_HASH = "a" * 64
 
 
