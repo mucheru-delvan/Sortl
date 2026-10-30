@@ -1,0 +1,7 @@
+#!@PYTHON@
+import sys
+
+from sortl import main
+
+if __name__ == '__main__':
+    sys.exit(main())

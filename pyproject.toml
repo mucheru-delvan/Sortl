@@ -1,12 +1,13 @@
 [project]
 name = "sortl"
 version = "0.1.0"
-description = "Add your description here"
+description = "Safely organize a folder into category folders, with a preview and a verified move journal."
 readme = "README.md"
 authors = [
     { name = "Delvan Mucheru", email = "mkdelvan9@gmail.com" }
 ]
-requires-python = ">=3.14"
+requires-python = ">=3.12"
+license = "MIT"
 dependencies = []
 
 [project.scripts]
@@ -20,3 +21,7 @@ build-backend = "uv_build"
 dev = [
     "pytest>=9.2.0",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

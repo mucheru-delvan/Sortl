@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="back" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#62a0ea"/>
+      <stop offset="1" stop-color="#3584e4"/>
+    </linearGradient>
+    <linearGradient id="front" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#99c1f1"/>
+      <stop offset="1" stop-color="#62a0ea"/>
+    </linearGradient>
+  </defs>
+  <!-- folder back with tab -->
+  <path d="M14 32a8 8 0 0 1 8-8h27l9 9h48a8 8 0 0 1 8 8v60a8 8 0 0 1-8 8H22a8 8 0 0 1-8-8z" fill="url(#back)"/>
+  <!-- sorted file cards peeking out -->
+  <rect x="26" y="40" width="76" height="14" rx="3" fill="#f66151"/>
+  <rect x="26" y="50" width="76" height="14" rx="3" fill="#f5c211"/>
+  <rect x="26" y="60" width="76" height="14" rx="3" fill="#57e389"/>
+  <!-- folder front -->
+  <path d="M14 66a8 8 0 0 1 8-8h84a8 8 0 0 1 8 8v36a8 8 0 0 1-8 8H22a8 8 0 0 1-8-8z" fill="url(#front)"/>
+  <path d="M14 66a8 8 0 0 1 8-8h84a8 8 0 0 1 8 8v2H14z" fill="#ffffff" opacity=".35"/>
+</svg>

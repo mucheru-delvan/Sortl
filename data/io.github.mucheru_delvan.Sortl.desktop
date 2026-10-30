@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Sortl
+Comment=Organize a folder into category folders, safely
+Exec=sortl
+Icon=io.github.mucheru_delvan.Sortl
+Terminal=false
+StartupNotify=true
+Categories=Utility;FileTools;GTK;
+Keywords=organize;sort;files;folders;cleanup;downloads;

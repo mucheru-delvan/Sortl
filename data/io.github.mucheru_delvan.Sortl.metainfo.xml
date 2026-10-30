@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.mucheru_delvan.Sortl</id>
+  <name>Sortl</name>
+  <summary>Tidy a folder into categories</summary>
+  <developer id="io.github.mucheru_delvan">
+    <name>Delvan Mucheru</name>
+  </developer>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+
+  <description>
+    <p>
+      Sortl tidies a messy folder such as Downloads by sorting its files into
+      category folders like Images, Documents, and Archives. You see exactly what
+      will move before anything changes.
+    </p>
+    <p>Built to be careful with your files:</p>
+    <ul>
+      <li>Preview every move before you confirm</li>
+      <li>Files are never overwritten; name clashes are skipped</li>
+      <li>Each move is verified and recorded in a history</li>
+      <li>An integrity check can inspect any interrupted operation without changing files</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">io.github.mucheru_delvan.Sortl.desktop</launchable>
+
+  <url type="homepage">https://github.com/mucheru-delvan/Sortl</url>
+  <url type="bugtracker">https://github.com/mucheru-delvan/Sortl/issues</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>Preview every move before anything changes</caption>
+      <image type="source">https://raw.githubusercontent.com/mucheru-delvan/Sortl/v0.1.0/data/screenshots/preview.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Review what was moved and check integrity</caption>
+      <image type="source">https://raw.githubusercontent.com/mucheru-delvan/Sortl/v0.1.0/data/screenshots/history.png</image>
+    </screenshot>
+  </screenshots>
+
+  <content_rating type="oars-1.1"/>
+
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <control>touch</control>
+  </supports>
+
+  <releases>
+    <release version="0.1.0" date="2026-10-29">
+      <description>
+        <p>First release: choose a folder, preview the plan, organize, and review history.</p>
+      </description>
+    </release>
+  </releases>
+</component>
