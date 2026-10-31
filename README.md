@@ -49,13 +49,17 @@ dbus-run-session -- xvfb-run -a env GSK_RENDERER=cairo pytest tests/test_ui_smok
 ## Build and run the Flatpak
 
 ```sh
-flatpak install flathub org.gnome.Platform//50 org.gnome.Sdk//50
+flatpak install flathub org.gnome.Platform//51 org.gnome.Sdk//51
 flatpak-builder --user --install --force-clean build-dir io.github.mucheru_delvan.Sortl.yaml
 flatpak run io.github.mucheru_delvan.Sortl
 ```
 
-The app has no filesystem permission. Folders are granted per use through the
-file chooser portal, and the journal lives in `~/.var/app/io.github.mucheru_delvan.Sortl/data/`.
+Sortl has direct access to Downloads, Documents and Desktop. Folders chosen
+elsewhere arrive through the file chooser portal, which can't move files
+reliably (it intermittently reports a just-moved file as missing), so Sortl
+refuses them with an explanation. Grant another folder with Flatseal or
+`flatpak override --user --filesystem=/path/to/folder io.github.mucheru_delvan.Sortl`.
+The journal lives in `~/.var/app/io.github.mucheru_delvan.Sortl/data/sortl/`.
 
 ## License
 

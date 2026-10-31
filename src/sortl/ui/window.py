@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import threading
 from datetime import datetime
 from pathlib import Path
@@ -20,11 +21,14 @@ from sortl.service import (
     count_needing_attention,
     group_by_category,
     inspect_history,
+    is_document_portal_path,
     load_history,
     run_plan,
     scan_folder,
 )
 from sortl.ui.threads import call_in_main, run_in_thread
+
+log = logging.getLogger("sortl")
 
 # Rendering thousands of rows would freeze the UI; the data is never truncated,
 # only what we draw.
@@ -195,11 +199,33 @@ class SortlWindow(Adw.ApplicationWindow):
             return
 
         path = folder.get_path() if folder is not None else None
+        log.info("Folder chosen: %s", path)
         if path is None:
             self._toast("That location isn't a local folder.")
             return
 
-        self.start_scan(Path(path))
+        self.open_folder(Path(path))
+
+    def open_folder(self, path: Path) -> None:
+        """Entry point once a folder is chosen: refuse unsafe locations."""
+        if is_document_portal_path(path):
+            log.warning("Refusing portal-only folder: %s", path)
+            dialog = Adw.AlertDialog(
+                heading="Can't Organize This Folder",
+                body=(
+                    "Sortl can only organize folders it has direct access to. "
+                    "This one is only reachable through the sandbox's file "
+                    "portal, which can't move files reliably.\n\n"
+                    "Choose a folder inside Downloads, Documents or Desktop, "
+                    "or give Sortl access to this folder with Flatseal."
+                ),
+            )
+            dialog.add_response("ok", "OK")
+            dialog.set_default_response("ok")
+            dialog.present(self)
+            return
+
+        self.start_scan(path)
 
     # ------------------------------------------------------ scanning page --
 
@@ -215,14 +241,17 @@ class SortlWindow(Adw.ApplicationWindow):
         self._add_page("scanning", page)
 
     def start_scan(self, root: Path) -> None:
+        log.info("Scanning %s", root)
         self._show("scanning")
         run_in_thread(
             lambda: scan_folder(root), self._on_scan_done, self._on_scan_error
         )
 
     def _on_scan_error(self, exc: Exception) -> None:
+        log.error("Scan failed: %r", exc, exc_info=exc)
         self._show("start")
-        self._toast(f"Couldn't scan that folder: {exc.__class__.__name__}")
+        detail = str(exc) or exc.__class__.__name__
+        self._toast(f"Couldn't scan that folder: {detail[:200]}")
 
     def _on_scan_done(self, plan: Plan) -> None:
         self._plan = plan
@@ -363,6 +392,7 @@ class SortlWindow(Adw.ApplicationWindow):
             return
 
         plan = self._plan
+        log.info("Organizing %s (%d operations)", plan.root, len(plan.operations))
         self._running = True
         self._cancel.clear()
         self._progress.set_fraction(0.0)
@@ -402,6 +432,7 @@ class SortlWindow(Adw.ApplicationWindow):
         return True
 
     def _on_run_error(self, exc: Exception) -> None:
+        log.error("Run failed: %r", exc, exc_info=exc)
         self._running = False
         if isinstance(exc, FolderCheckError):
             self._set_done(

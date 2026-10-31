@@ -2,17 +2,22 @@
 # source with the pinned `git` source shown in the comment below.
 app-id: io.github.mucheru_delvan.Sortl
 runtime: org.gnome.Platform
-runtime-version: '50'
+runtime-version: '51'
 sdk: org.gnome.Sdk
 command: sortl
 
 finish-args:
-  # GUI only. No filesystem access: folders are granted per use through the
-  # FileChooser portal (Gtk.FileDialog).
   - --share=ipc
   - --socket=wayland
   - --socket=fallback-x11
   - --device=dri
+  # Direct access to the folders people actually need tidied. Folders granted
+  # through the file chooser portal are served by the document portal's FUSE
+  # layer, which intermittently reports a just-moved file as missing, so Sortl
+  # refuses those and asks for a folder it can reach directly.
+  - --filesystem=xdg-download
+  - --filesystem=xdg-documents
+  - --filesystem=xdg-desktop
 
 modules:
   - name: sortl

@@ -178,3 +178,40 @@ def test_every_icon_name_exists_in_the_adwaita_theme() -> None:
 
     assert len(names) > 10
     assert [n for n in sorted(names) if not theme.has_icon(n)] == []
+
+
+def test_scan_of_a_missing_folder_returns_to_start(
+    app: Adw.Application, tmp_path: Path
+) -> None:
+    window = make_window(app, tmp_path)
+    window.start_scan(tmp_path / "does-not-exist")
+    assert window.current_page == "scanning"
+
+    pump(lambda: window.current_page == "start")
+
+    assert window._plan is None
+    window.destroy()
+
+
+def test_portal_only_folder_is_refused_before_scanning(
+    app: Adw.Application, tmp_path: Path
+) -> None:
+    window = make_window(app, tmp_path)
+
+    window.open_folder(Path("/run/flatpak/doc/abc123/Downloads"))
+
+    assert window.current_page == "start"
+    assert window._plan is None
+    window.destroy()
+
+
+def test_direct_folder_is_scanned(
+    app: Adw.Application, tmp_path: Path, messy: Path
+) -> None:
+    window = make_window(app, tmp_path)
+
+    window.open_folder(messy)
+    pump(lambda: window.current_page == "preview")
+
+    assert window._plan is not None
+    window.destroy()

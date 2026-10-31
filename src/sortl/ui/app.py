@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import sys
 from pathlib import Path
 
@@ -65,5 +66,6 @@ class SortlApplication(Adw.Application):
 
 
 def run() -> int:
+    logging.basicConfig(level=logging.INFO, format="%(name)s: %(message)s")
     GLib.set_application_name(APP_NAME)
     return SortlApplication().run(sys.argv)
