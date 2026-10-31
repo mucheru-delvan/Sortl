@@ -53,7 +53,7 @@
   </supports>
 
   <releases>
-    <release version="0.1.0" date="2026-10-29">
+    <release version="0.1.0" date="2026-10-31">
       <description>
         <p>First release: choose a folder, preview the plan, organize, and review history.</p>
       </description>
