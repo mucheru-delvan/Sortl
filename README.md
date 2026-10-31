@@ -14,19 +14,42 @@ what will move before anything changes, and it is built to never lose a file.
 - **Recoverable.** If something is interrupted, the history view can inspect
   every journaled operation read-only and tell you what state it is in.
 - **Fails closed.** Sortl checks that the folder supports hard links before it
-  touches anything, and halts the whole run on the first unexpected failure.
+  touches anything (some USB drives and network shares don't), and halts the
+  whole run on the first unexpected failure.
 
 Only files directly inside the chosen folder are moved; subfolders are left alone.
+
+## Install (Debian/Ubuntu)
+
+Needs Ubuntu 24.04 / Debian 13 or newer (libadwaita 1.5+, Python 3.12+).
+Download the `.deb` from the Releases page, then:
+
+```sh
+sudo apt install ./sortl_0.1.1-1_all.deb
+```
+
+Sortl is not sandboxed, so it can organize any folder you can write to. Its
+move history is kept in `~/.local/share/sortl/journal.sqlite3`. Remove it with
+`sudo apt remove sortl`.
+
+## Build the .deb
+
+```sh
+sudo apt install meson ninja-build dpkg-dev appstream desktop-file-utils
+packaging/deb/build-deb.sh        # writes dist/sortl_<version>-1_all.deb
+```
+
+The build runs the test-suite's desktop-file and AppStream validators first.
 
 ## Layout
 
 | Path | Purpose |
 | --- | --- |
 | `src/sortl/{planner,executor,journal,recovery,models}.py` | GTK-free core |
-| `src/sortl/service.py` | Orchestration used by the UI (progress, cancel, probe) |
+| `src/sortl/service.py` | Orchestration used by the UI (progress, cancel, hard-link check) |
 | `src/sortl/ui/` | GTK4 + libadwaita front-end |
-| `data/` | Desktop entry, AppStream metainfo, icons |
-| `io.github.mucheru_delvan.Sortl.yaml` | Flatpak manifest |
+| `data/` | Desktop entry, AppStream metainfo, icons, screenshots |
+| `packaging/deb/build-deb.sh` | Builds the `.deb` package |
 
 ## Run from source
 
@@ -45,21 +68,6 @@ pytest                      # core + service + packaging checks
 # UI smoke tests need a display; headless:
 dbus-run-session -- xvfb-run -a env GSK_RENDERER=cairo pytest tests/test_ui_smoke.py
 ```
-
-## Build and run the Flatpak
-
-```sh
-flatpak install flathub org.gnome.Platform//51 org.gnome.Sdk//51
-flatpak-builder --user --install --force-clean build-dir io.github.mucheru_delvan.Sortl.yaml
-flatpak run io.github.mucheru_delvan.Sortl
-```
-
-Sortl has direct access to Downloads, Documents and Desktop. Folders chosen
-elsewhere arrive through the file chooser portal, which can't move files
-reliably (it intermittently reports a just-moved file as missing), so Sortl
-refuses them with an explanation. Grant another folder with Flatseal or
-`flatpak override --user --filesystem=/path/to/folder io.github.mucheru_delvan.Sortl`.
-The journal lives in `~/.var/app/io.github.mucheru_delvan.Sortl/data/sortl/`.
 
 ## License
 

@@ -21,7 +21,6 @@ from sortl.service import (
     count_needing_attention,
     group_by_category,
     inspect_history,
-    is_document_portal_path,
     load_history,
     run_plan,
     scan_folder,
@@ -204,28 +203,7 @@ class SortlWindow(Adw.ApplicationWindow):
             self._toast("That location isn't a local folder.")
             return
 
-        self.open_folder(Path(path))
-
-    def open_folder(self, path: Path) -> None:
-        """Entry point once a folder is chosen: refuse unsafe locations."""
-        if is_document_portal_path(path):
-            log.warning("Refusing portal-only folder: %s", path)
-            dialog = Adw.AlertDialog(
-                heading="Can't Organize This Folder",
-                body=(
-                    "Sortl can only organize folders it has direct access to. "
-                    "This one is only reachable through the sandbox's file "
-                    "portal, which can't move files reliably.\n\n"
-                    "Choose a folder inside Downloads, Documents or Desktop, "
-                    "or give Sortl access to this folder with Flatseal."
-                ),
-            )
-            dialog.add_response("ok", "OK")
-            dialog.set_default_response("ok")
-            dialog.present(self)
-            return
-
-        self.start_scan(path)
+        self.start_scan(Path(path))
 
     # ------------------------------------------------------ scanning page --
 

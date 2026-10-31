@@ -237,16 +237,3 @@ def test_inspect_history_reports_findings(
     }
     assert ExecutionStatus.COMPLETED.value == "completed"
 
-
-@pytest.mark.parametrize(
-    ("path", "expected"),
-    [
-        ("/run/flatpak/doc/3ecbf75d/sortl-test2", True),
-        ("/run/user/1000/doc/3ecbf75d/Downloads", True),
-        ("/home/me/Downloads", False),
-        ("/run/media/me/usb/Downloads", False),
-        ("/tmp/run/flatpak/doc/x", False),
-    ],
-)
-def test_is_document_portal_path(path: str, expected: bool) -> None:
-    assert service.is_document_portal_path(path) is expected

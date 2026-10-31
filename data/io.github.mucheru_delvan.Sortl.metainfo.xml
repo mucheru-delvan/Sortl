@@ -53,6 +53,11 @@
   </supports>
 
   <releases>
+    <release version="0.1.1" date="2026-10-31">
+      <description>
+        <p>Distributed as a Debian package.</p>
+      </description>
+    </release>
     <release version="0.1.0" date="2026-10-31">
       <description>
         <p>First release: choose a folder, preview the plan, organize, and review history.</p>

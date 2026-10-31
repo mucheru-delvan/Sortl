@@ -1,6 +1,6 @@
 [project]
 name = "sortl"
-version = "0.1.0"
+version = "0.1.1"
 description = "Safely organize a folder into category folders, with a preview and a verified move journal."
 readme = "README.md"
 authors = [

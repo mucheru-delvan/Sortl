@@ -15,7 +15,7 @@ WEBSITE = "https://github.com/mucheru-delvan/Sortl"
 
 
 def default_journal_path() -> Path:
-    """Journal location. Inside Flatpak this is ~/.var/app/<id>/data/sortl/."""
+    """Journal location: ~/.local/share/sortl/journal.sqlite3 (XDG data dir)."""
     return Path(GLib.get_user_data_dir()) / "sortl" / "journal.sqlite3"
 
 

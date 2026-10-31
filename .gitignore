@@ -25,7 +25,3 @@ htmlcov/
 .idea/
 .DS_Store
 
-# Flatpak
-.flatpak-builder/
-repo/
-build-dir/

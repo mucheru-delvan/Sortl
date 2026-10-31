@@ -43,5 +43,4 @@ def test_app_id_matches_all_file_names() -> None:
     assert (data / f"{sortl.APP_ID}.desktop").exists()
     assert (data / f"{sortl.APP_ID}.metainfo.xml").exists()
     assert (data / "icons/hicolor/scalable/apps" / f"{sortl.APP_ID}.svg").exists()
-    assert (ROOT / f"{sortl.APP_ID}.yaml").exists()
     assert f"app_id = '{sortl.APP_ID}'" in (ROOT / "meson.build").read_text()

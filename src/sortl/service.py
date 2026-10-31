@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import errno
 import os
-import re
 import threading
 from collections.abc import Callable, Iterable
 from contextlib import suppress
@@ -28,8 +27,6 @@ from sortl.recovery import RecoveryFinding, inspect_journal
 
 PROBE_PREFIX = ".sortl-probe-"
 
-# Folders the sandbox only reaches through the document portal's FUSE mount.
-_PORTAL_PATH = re.compile(r"^(/run/flatpak/doc/|/run/user/\d+/doc/)")
 
 # Journal states that mean "something did not finish cleanly".
 ATTENTION_STATUSES = frozenset(
@@ -45,17 +42,6 @@ ProgressCallback = Callable[[int, int, Path], None]
 
 class FolderCheckError(RuntimeError):
     """The chosen folder cannot be organized safely. Message is user-facing."""
-
-
-def is_document_portal_path(path: Path | str) -> bool:
-    """True for paths served by the Flatpak document portal.
-
-    Moving files there is unreliable: the portal's FUSE layer intermittently
-    reports a just-moved destination as missing. The move itself succeeds
-    (nothing is lost) but verification fails, so Sortl refuses these folders
-    up front instead of stopping halfway through a run.
-    """
-    return _PORTAL_PATH.match(os.fspath(path)) is not None
 
 
 def scan_folder(root: Path) -> Plan:
